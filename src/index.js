@@ -1,16 +1,25 @@
 import express from 'express';
+import constants from './config/constants';
+
+import './config/database';
+
+import middelWaresConfig from './config/middlewares';
 
 const app = express();
 
-const PORT = process.env.PORT || 3000;
+middelWaresConfig(app);
 
-app.listen(PORT, err => {
+app.get('/', (req, res, next) => {
+	res.send('all good in the hood.');
+});
+
+app.listen(constants.PORT, err => {
 	if (err) {
 		throw err;
 	} else {
 		console.log(
 			`
-      Server running on port: ${PORT}
+      Server running on port: ${constants.PORT}
       ---
       Running on ${process.env.NODE_ENV}
       `
