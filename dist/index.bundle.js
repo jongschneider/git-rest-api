@@ -64,7 +64,7 @@ module.exports =
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 3);
+/******/ 	return __webpack_require__(__webpack_require__.s = 5);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -113,7 +113,7 @@ exports.default = Object.assign({}, defaultConfig, envConfig(process.env.NODE_EN
 "use strict";
 
 
-var _mongoose = __webpack_require__(4);
+var _mongoose = __webpack_require__(9);
 
 var _mongoose2 = _interopRequireDefault(_mongoose);
 
@@ -139,61 +139,6 @@ _mongoose2.default.connection.once('open', () => console.log('MongoDB running'))
 
 /***/ }),
 /* 2 */
-/***/ (function(module, exports) {
-
-module.exports = require("express");
-
-/***/ }),
-/* 3 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var _express = __webpack_require__(2);
-
-var _express2 = _interopRequireDefault(_express);
-
-var _constants = __webpack_require__(0);
-
-var _constants2 = _interopRequireDefault(_constants);
-
-__webpack_require__(1);
-
-var _middlewares = __webpack_require__(5);
-
-var _middlewares2 = _interopRequireDefault(_middlewares);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-const app = (0, _express2.default)();
-
-(0, _middlewares2.default)(app);
-
-app.get('/', (req, res, next) => {
-	res.send('all good in the hood.');
-});
-
-app.listen(_constants2.default.PORT, err => {
-	if (err) {
-		throw err;
-	} else {
-		console.log(`
-      Server running on port: ${_constants2.default.PORT}
-      ---
-      Running on ${process.env.NODE_ENV}
-      `);
-	}
-});
-
-/***/ }),
-/* 4 */
-/***/ (function(module, exports) {
-
-module.exports = require("mongoose");
-
-/***/ }),
-/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -203,7 +148,7 @@ Object.defineProperty(exports, "__esModule", {
 	value: true
 });
 
-var _morgan = __webpack_require__(9);
+var _morgan = __webpack_require__(10);
 
 var _morgan2 = _interopRequireDefault(_morgan);
 
@@ -237,6 +182,56 @@ exports.default = app => {
 };
 
 /***/ }),
+/* 3 */,
+/* 4 */
+/***/ (function(module, exports) {
+
+module.exports = require("express");
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _express = __webpack_require__(4);
+
+var _express2 = _interopRequireDefault(_express);
+
+var _constants = __webpack_require__(0);
+
+var _constants2 = _interopRequireDefault(_constants);
+
+__webpack_require__(1);
+
+var _middlewares = __webpack_require__(2);
+
+var _middlewares2 = _interopRequireDefault(_middlewares);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+const app = (0, _express2.default)();
+
+(0, _middlewares2.default)(app);
+
+app.get('/', (req, res, next) => {
+	res.send('all good in the hood.');
+});
+
+app.listen(_constants2.default.PORT, err => {
+	if (err) {
+		throw err;
+	} else {
+		console.log(`
+      Server running on port: ${_constants2.default.PORT}
+      ---
+      Running on ${process.env.NODE_ENV}
+      `);
+	}
+});
+
+/***/ }),
 /* 6 */
 /***/ (function(module, exports) {
 
@@ -256,6 +251,12 @@ module.exports = require("helmet");
 
 /***/ }),
 /* 9 */
+/***/ (function(module, exports) {
+
+module.exports = require("mongoose");
+
+/***/ }),
+/* 10 */
 /***/ (function(module, exports) {
 
 module.exports = require("morgan");
