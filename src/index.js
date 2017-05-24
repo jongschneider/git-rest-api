@@ -4,6 +4,7 @@ import constants from './config/constants';
 import './config/database';
 
 import middelWaresConfig from './config/middlewares';
+import apiRoutes from './modules';
 
 const app = express();
 
@@ -12,6 +13,8 @@ middelWaresConfig(app);
 app.get('/', (req, res, next) => {
 	res.send('all good in the hood.');
 });
+
+apiRoutes(app);
 
 app.listen(constants.PORT, err => {
 	if (err) {
