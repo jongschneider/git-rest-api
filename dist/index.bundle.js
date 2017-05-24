@@ -473,61 +473,10 @@ exports.default = routes;
 
 /***/ }),
 /* 12 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, exports) {
 
 "use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-	value: true
-});
-exports.authLocal = undefined;
-
-var _passport = __webpack_require__(5);
-
-var _passport2 = _interopRequireDefault(_passport);
-
-var _passportLocal = __webpack_require__(20);
-
-var _passportLocal2 = _interopRequireDefault(_passportLocal);
-
-var _user = __webpack_require__(2);
-
-var _user2 = _interopRequireDefault(_user);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
-
-const localOpts = {
-	usernameField: 'email'
-};
-
-const localStrategy = new _passportLocal2.default(localOpts, (() => {
-	var _ref = _asyncToGenerator(function* (email, password, done) {
-		try {
-			const user = yield _user2.default.findOne({ email });
-
-			if (!user) {
-				return done(null, false);
-			} else if (!user.authenticateUser(password)) {
-				return done(null, false);
-			}
-
-			return done(null, user);
-		} catch (err) {
-			return done(err, false);
-		}
-	});
-
-	return function (_x, _x2, _x3) {
-		return _ref.apply(this, arguments);
-	};
-})());
-
-_passport2.default.use(localStrategy);
-
-const authLocal = exports.authLocal = _passport2.default.authenticate('local', { session: false });
+throw new Error("Module build failed: Error: ENOENT: no such file or directory, open '/Users/JonathanSchneider/Documents/Project Folders/restapi/src/services/auth.services.js'\n    at Error (native)");
 
 /***/ }),
 /* 13 */
@@ -572,12 +521,7 @@ module.exports = require("joi");
 module.exports = require("morgan");
 
 /***/ }),
-/* 20 */
-/***/ (function(module, exports) {
-
-module.exports = require("passport-local");
-
-/***/ }),
+/* 20 */,
 /* 21 */
 /***/ (function(module, exports) {
 
