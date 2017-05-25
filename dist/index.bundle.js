@@ -767,7 +767,7 @@ function login(req, res, next) {
 
 
 Object.defineProperty(exports, "__esModule", {
-  value: true
+	value: true
 });
 
 var _express = __webpack_require__(1);
@@ -794,6 +794,10 @@ const routes = new _express.Router();
 
 routes.post('/signup', (0, _expressValidation2.default)(_user3.default.signup), userController.signUp);
 routes.post('/login', _auth.authLocal, userController.login);
+
+routes.get('/hello', (req, res) => {
+	res.send('hello');
+});
 
 exports.default = routes;
 

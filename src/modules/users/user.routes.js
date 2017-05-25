@@ -10,4 +10,8 @@ const routes = new Router();
 routes.post('/signup', validate(userValidation.signup), userController.signUp);
 routes.post('/login', authLocal, userController.login);
 
+routes.get('/hello', (req, res) => {
+	res.send('hello');
+});
+
 export default routes;
