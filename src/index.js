@@ -14,6 +14,10 @@ app.get('/', (req, res, next) => {
 	res.send('all good in the hood.');
 });
 
+app.get('/api/v1/users/auth/facebook/callback', (req, res, next) => {
+	res.send('success');
+});
+
 apiRoutes(app);
 
 app.listen(constants.PORT, err => {
