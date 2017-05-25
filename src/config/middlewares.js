@@ -14,6 +14,13 @@ export default app => {
 	}
 	app.use(bodyParser.json());
 	app.use(bodyParser.urlencoded({ extended: true }));
+	app.use(
+		require('express-session')({
+			secret: 'keyboard cat',
+			resave: true,
+			saveUninitialized: true
+		})
+	);
 	app.use(passport.initialize());
 
 	if (isDev) {
