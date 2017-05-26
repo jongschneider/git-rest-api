@@ -7,7 +7,7 @@
   "scripts": {
     "clean": "rimraf dist",
     "dev:build": "npm run-script clean && webpack -w",
-    "dev": "cross-env NODE_ENV=development nodemon dist/index.bundle.js"
+    "dev": "cross-env NODE_ENV=development nodemon dist/index.bundle.js",
   },
   "author": "Jonathan Schneider",
   "license": "MIT",
