@@ -3,7 +3,7 @@ import bodyParser from 'body-parser';
 import compression from 'compression';
 import helmet from 'helmet';
 import passport from 'passport';
-
+import session from 'express-session';
 const isDev = process.env.NODE_ENV === 'development';
 const isProd = process.env.NODE_ENV === 'production';
 
@@ -15,7 +15,7 @@ export default app => {
 	app.use(bodyParser.json());
 	app.use(bodyParser.urlencoded({ extended: true }));
 	app.use(
-		require('express-session')({
+		session({
 			secret: 'keyboard cat',
 			resave: true,
 			saveUninitialized: true

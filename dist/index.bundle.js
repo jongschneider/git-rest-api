@@ -275,7 +275,7 @@ exports.default = {
 Object.defineProperty(exports, "__esModule", {
 	value: true
 });
-exports.authJwt = exports.authLocal = undefined;
+exports.authFacebook = exports.authJwt = exports.authLocal = undefined;
 
 var _passport = __webpack_require__(9);
 
@@ -287,6 +287,10 @@ var _passportLocal2 = _interopRequireDefault(_passportLocal);
 
 var _passportJwt = __webpack_require__(28);
 
+var _facebook = __webpack_require__(33);
+
+var _facebook2 = _interopRequireDefault(_facebook);
+
 var _user = __webpack_require__(3);
 
 var _user2 = _interopRequireDefault(_user);
@@ -295,9 +299,14 @@ var _constants = __webpack_require__(0);
 
 var _constants2 = _interopRequireDefault(_constants);
 
+var _auth = __webpack_require__(32);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
+
+const FacebookStrategy = __webpack_require__(27).Strategy;
+
 
 // Local Strategy
 const localOpts = {
@@ -352,11 +361,59 @@ const jwtStrategy = new _passportJwt.Strategy(jwtOpts, (() => {
 	};
 })());
 
+//Facebook Strategy
+const facebookStrategy = new FacebookStrategy(_auth.facebookAuth, function (accessToken, refreshToken, profile, cb) {
+	process.nextTick(function () {
+		_facebook2.default.findOne({ id: profile.id }, function (err, user) {
+			if (err) {
+				return cb(err, false);
+			}
+			if (user) {
+				return cb(null, user);
+			} else {
+				const newUser = new _facebook2.default();
+				newUser.id = profile.id;
+				newUser.token = accessToken;
+				newUser.email = profile.emails[0].value;
+				newUser.name = profile.name.givenName + ' ' + profile.name.familyName;
+				newUser.firstName = profile.name.givenName;
+				newUser.lastName = profile.name.familyName;
+
+				newUser.save(function (err) {
+					if (err) {
+						throw err;
+					}
+					return cb(null, newUser);
+				});
+			}
+		});
+	});
+
+	console.log('Your accessToken is :' + accessToken);
+	console.log('Your refreshToken is :' + refreshToken);
+	console.log('Your profile is :');
+	console.log(profile);
+	return cb(null, profile);
+});
+
+// Saves user to session req.session.passport.user
+_passport2.default.serializeUser(function (user, cb) {
+	cb(null, user);
+});
+
+_passport2.default.deserializeUser(function (obj, cb) {
+	cb(null, obj);
+});
+
 _passport2.default.use(localStrategy);
 _passport2.default.use(jwtStrategy);
+_passport2.default.use(facebookStrategy);
 
 const authLocal = exports.authLocal = _passport2.default.authenticate('local', { session: false });
 const authJwt = exports.authJwt = _passport2.default.authenticate('jwt', { session: false });
+const authFacebook = exports.authFacebook = _passport2.default.authenticate('facebook', {
+	session: false
+});
 
 /***/ }),
 /* 6 */
@@ -444,6 +501,10 @@ var _passport = __webpack_require__(9);
 
 var _passport2 = _interopRequireDefault(_passport);
 
+var _expressSession = __webpack_require__(23);
+
+var _expressSession2 = _interopRequireDefault(_expressSession);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 const isDev = process.env.NODE_ENV === 'development';
@@ -456,7 +517,7 @@ exports.default = app => {
 	}
 	app.use(_bodyParser2.default.json());
 	app.use(_bodyParser2.default.urlencoded({ extended: true }));
-	app.use(__webpack_require__(23)({
+	app.use((0, _expressSession2.default)({
 		secret: 'keyboard cat',
 		resave: true,
 		saveUninitialized: true
@@ -521,49 +582,12 @@ var _modules2 = _interopRequireDefault(_modules);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-//add for FB
-var passport = __webpack_require__(9),
-    FacebookStrategy = __webpack_require__(27).Strategy;
-
 const app = (0, _express2.default)();
 
 (0, _middlewares2.default)(app);
 
 app.get('/', (req, res, next) => {
 	res.send('all good in the hood.');
-});
-
-app.get('/success', (req, res, next) => {
-	res.send('success.');
-});
-
-//added for FB
-app.get('/login/facebook', passport.authenticate('facebook'));
-
-app.get('/login/facebook/return', passport.authenticate('facebook', { failureRedirect: '/' }), function (req, res) {
-	res.redirect('/success');
-});
-
-passport.use(new FacebookStrategy({
-	clientID: '798559090299566',
-	clientSecret: 'ec67c23c0c1005e468df1f2afcb25d50',
-	callbackURL: 'http://localhost:3000/login/facebook/return',
-	profileFields: ['id', 'displayName', 'email', 'first_name', 'last_name'],
-	enableProof: true
-}, function (accessToken, refreshToken, profile, cb) {
-	console.log('Your accessToken is :' + accessToken);
-	console.log('Your refreshToken is :' + refreshToken);
-	console.log('Your profile is :');
-	console.log(profile);
-	return cb(null, profile);
-}));
-
-passport.serializeUser(function (user, cb) {
-	cb(null, user);
-});
-
-passport.deserializeUser(function (obj, cb) {
-	cb(null, obj);
 });
 
 (0, _modules2.default)(app);
@@ -809,7 +833,7 @@ function login(req, res, next) {
 
 
 Object.defineProperty(exports, "__esModule", {
-  value: true
+	value: true
 });
 
 var _express = __webpack_require__(1);
@@ -817,6 +841,10 @@ var _express = __webpack_require__(1);
 var _expressValidation = __webpack_require__(6);
 
 var _expressValidation2 = _interopRequireDefault(_expressValidation);
+
+var _passport = __webpack_require__(9);
+
+var _passport2 = _interopRequireDefault(_passport);
 
 var _auth = __webpack_require__(5);
 
@@ -836,6 +864,26 @@ const routes = new _express.Router();
 
 routes.post('/signup', (0, _expressValidation2.default)(_user3.default.signup), userController.signUp);
 routes.post('/login', _auth.authLocal, userController.login);
+
+//added for FB
+routes.get('/login/facebook', _auth.authFacebook);
+
+// passport.authenticate('facebook')
+routes.get('/login/facebook/return', _auth.authFacebook, function (req, res) {
+	res.redirect('/api/v1/users/success');
+});
+
+// routes.get(
+// 	'/login/facebook/return',
+// 	passport.authenticate('facebook', { failureRedirect: '/' }),
+// 	function(req, res) {
+// 		res.redirect('/api/v1/users/success');
+// 	}
+// );
+
+routes.get('/success', (req, res, next) => {
+	res.send('success.');
+});
 
 exports.default = routes;
 
@@ -910,6 +958,100 @@ module.exports = require("slug");
 /***/ (function(module, exports) {
 
 module.exports = require("validator");
+
+/***/ }),
+/* 32 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+module.exports = {
+	facebookAuth: {
+		clientID: '798559090299566',
+		clientSecret: 'ec67c23c0c1005e468df1f2afcb25d50',
+		callbackURL: 'http://localhost:3000/api/v1/users/login/facebook/return',
+		profileFields: ['id', 'displayName', 'email', 'first_name', 'last_name'],
+		enableProof: true
+	}
+};
+
+/***/ }),
+/* 33 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+
+var _mongoose = __webpack_require__(2);
+
+var _mongoose2 = _interopRequireDefault(_mongoose);
+
+var _validator = __webpack_require__(31);
+
+var _validator2 = _interopRequireDefault(_validator);
+
+var _jsonwebtoken = __webpack_require__(25);
+
+var _jsonwebtoken2 = _interopRequireDefault(_jsonwebtoken);
+
+var _mongooseUniqueValidator = __webpack_require__(8);
+
+var _mongooseUniqueValidator2 = _interopRequireDefault(_mongooseUniqueValidator);
+
+var _constants = __webpack_require__(0);
+
+var _constants2 = _interopRequireDefault(_constants);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+const FacebookSchema = new _mongoose.Schema({
+	id: {
+		type: String,
+		trim: true
+	},
+	token: {
+		type: String,
+		trim: true
+	},
+	email: {
+		type: String,
+		trim: true
+	},
+	name: {
+		type: String,
+		trim: true
+	},
+	firstName: {
+		type: String,
+		trim: true
+	},
+	lastName: {
+		type: String,
+		trim: true
+	}
+}, { timestamps: true });
+
+FacebookSchema.methods = {
+	createToken() {
+		return _jsonwebtoken2.default.sign({
+			_id: this._id
+		}, _constants2.default.JWT_SECRET);
+	},
+	toJSON() {
+		return {
+			id: this._id,
+			name: this.name,
+			token: `JWT ${this.createToken()}`
+		};
+	}
+};
+
+exports.default = _mongoose2.default.model('FBUser', FacebookSchema);
 
 /***/ })
 /******/ ]);
