@@ -231,7 +231,7 @@ UserSchema.methods = {
 	}
 };
 
-exports.default = _mongoose2.default.model('User', UserSchema);
+exports.default = _mongoose2.default.model('User', UserSchema, 'users');
 
 /***/ }),
 /* 4 */
@@ -1107,7 +1107,7 @@ FacebookSchema.methods = {
 	}
 };
 
-exports.default = _mongoose2.default.model('FBUser', FacebookSchema);
+exports.default = _mongoose2.default.model('FBUser', FacebookSchema, 'users');
 
 /***/ })
 /******/ ]);

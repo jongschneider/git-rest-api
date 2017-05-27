@@ -53,4 +53,4 @@ FacebookSchema.methods = {
 	}
 };
 
-export default mongoose.model('FBUser', FacebookSchema);
+export default mongoose.model('FBUser', FacebookSchema, 'users');
