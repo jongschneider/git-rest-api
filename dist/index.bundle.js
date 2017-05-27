@@ -362,14 +362,44 @@ const jwtStrategy = new _passportJwt.Strategy(jwtOpts, (() => {
 })());
 
 //Facebook Strategy
-const facebookStrategy = new FacebookStrategy(_auth.facebookAuth, function (accessToken, refreshToken, profile, cb) {
-	process.nextTick(function () {
-		_facebook2.default.findOne({ id: profile.id }, function (err, user) {
-			if (err) {
-				return cb(err, false);
-			}
+// const facebookStrategy = new FacebookStrategy(facebookAuth, function(
+// 	accessToken,
+// 	refreshToken,
+// 	profile,
+// 	cb
+// ) {
+// 	process.nextTick(function() {
+// 		FBUser.findOne({ id: profile.id }, function(err, user) {
+// 			if (err) {
+// 				return cb(err, false);
+// 			}
+// 			if (user) {
+// 				return cb(null, user);
+// 			} else {
+// 				const newUser = new FBUser();
+// 				newUser.id = profile.id;
+// 				newUser.token = accessToken;
+// 				newUser.email = profile.emails[0].value;
+// 				newUser.name = profile.name.givenName + ' ' + profile.name.familyName;
+// 				newUser.firstName = profile.name.givenName;
+// 				newUser.lastName = profile.name.familyName;
+//
+// 				newUser.save(function(err) {
+// 					if (err) {
+// 						throw err;
+// 					}
+// 					return cb(null, newUser);
+// 				});
+// 			}
+// 		});
+// 	});
+
+const facebookStrategy = new FacebookStrategy(_auth.facebookAuth, (() => {
+	var _ref3 = _asyncToGenerator(function* (accessToken, refreshToken, profile, done) {
+		try {
+			const user = yield _facebook2.default.findOne({ id: profile.id });
 			if (user) {
-				return cb(null, user);
+				return done(null, user);
 			} else {
 				const newUser = new _facebook2.default();
 				newUser.id = profile.id;
@@ -378,23 +408,18 @@ const facebookStrategy = new FacebookStrategy(_auth.facebookAuth, function (acce
 				newUser.name = profile.name.givenName + ' ' + profile.name.familyName;
 				newUser.firstName = profile.name.givenName;
 				newUser.lastName = profile.name.familyName;
-
-				newUser.save(function (err) {
-					if (err) {
-						throw err;
-					}
-					return cb(null, newUser);
-				});
+				newUser.save();
+				return done(null, newUser);
 			}
-		});
+		} catch (err) {
+			return done(err, false);
+		}
 	});
 
-	console.log('Your accessToken is :' + accessToken);
-	console.log('Your refreshToken is :' + refreshToken);
-	console.log('Your profile is :');
-	console.log(profile);
-	return cb(null, profile);
-});
+	return function (_x6, _x7, _x8, _x9) {
+		return _ref3.apply(this, arguments);
+	};
+})());
 
 // Saves user to session req.session.passport.user
 _passport2.default.serializeUser(function (user, cb) {
@@ -824,6 +849,37 @@ function login(req, res, next) {
 
 	return next();
 }
+
+// export async function fbSignup(err, user) {
+// 		if (err) {
+// 			return cb(err, false);
+// 		}
+// 		if (user) {
+// 			return cb(null, user);
+// 		} else {
+// 			const newUser = new FBUser();
+// 			newUser.id = profile.id;
+// 			newUser.token = accessToken;
+// 			newUser.email = profile.emails[0].value;
+// 			newUser.name = profile.name.givenName + ' ' + profile.name.familyName;
+// 			newUser.firstName = profile.name.givenName;
+// 			newUser.lastName = profile.name.familyName;
+//
+// 			newUser.save(function(err) {
+// 				if (err) {
+// 					throw err;
+// 				}
+// 				return cb(null, newUser);
+// 			});
+// 		}
+// 	});
+// });
+//
+// console.log('Your accessToken is :' + accessToken);
+// console.log('Your refreshToken is :' + refreshToken);
+// console.log('Your profile is :');
+// console.log(profile);
+// return cb(null, profile);)
 
 /***/ }),
 /* 19 */

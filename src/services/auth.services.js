@@ -53,19 +53,45 @@ const jwtStrategy = new JWTStrategy(jwtOpts, async (payload, done) => {
 });
 
 //Facebook Strategy
-const facebookStrategy = new FacebookStrategy(facebookAuth, function(
-	accessToken,
-	refreshToken,
-	profile,
-	cb
-) {
-	process.nextTick(function() {
-		FBUser.findOne({ id: profile.id }, function(err, user) {
-			if (err) {
-				return cb(err, false);
-			}
+// const facebookStrategy = new FacebookStrategy(facebookAuth, function(
+// 	accessToken,
+// 	refreshToken,
+// 	profile,
+// 	cb
+// ) {
+// 	process.nextTick(function() {
+// 		FBUser.findOne({ id: profile.id }, function(err, user) {
+// 			if (err) {
+// 				return cb(err, false);
+// 			}
+// 			if (user) {
+// 				return cb(null, user);
+// 			} else {
+// 				const newUser = new FBUser();
+// 				newUser.id = profile.id;
+// 				newUser.token = accessToken;
+// 				newUser.email = profile.emails[0].value;
+// 				newUser.name = profile.name.givenName + ' ' + profile.name.familyName;
+// 				newUser.firstName = profile.name.givenName;
+// 				newUser.lastName = profile.name.familyName;
+//
+// 				newUser.save(function(err) {
+// 					if (err) {
+// 						throw err;
+// 					}
+// 					return cb(null, newUser);
+// 				});
+// 			}
+// 		});
+// 	});
+
+const facebookStrategy = new FacebookStrategy(
+	facebookAuth,
+	async (accessToken, refreshToken, profile, done) => {
+		try {
+			const user = await FBUser.findOne({ id: profile.id });
 			if (user) {
-				return cb(null, user);
+				return done(null, user);
 			} else {
 				const newUser = new FBUser();
 				newUser.id = profile.id;
@@ -74,23 +100,14 @@ const facebookStrategy = new FacebookStrategy(facebookAuth, function(
 				newUser.name = profile.name.givenName + ' ' + profile.name.familyName;
 				newUser.firstName = profile.name.givenName;
 				newUser.lastName = profile.name.familyName;
-
-				newUser.save(function(err) {
-					if (err) {
-						throw err;
-					}
-					return cb(null, newUser);
-				});
+				newUser.save();
+				return done(null, newUser);
 			}
-		});
-	});
-
-	console.log('Your accessToken is :' + accessToken);
-	console.log('Your refreshToken is :' + refreshToken);
-	console.log('Your profile is :');
-	console.log(profile);
-	return cb(null, profile);
-});
+		} catch (err) {
+			return done(err, false);
+		}
+	}
+);
 
 // Saves user to session req.session.passport.user
 passport.serializeUser(function(user, cb) {
